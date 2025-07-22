@@ -19,12 +19,14 @@ const playerTableBody = document.querySelector('#player-table tbody');
 
 function connectWebSocket() {
   try {
-    ws = new WebSocket('ws://localhost:8080');
+    const wsProtocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
+    const wsHost = window.location.host;
+    ws = new WebSocket(`${wsProtocol}//${wsHost}`);
     
     ws.onopen = function() {
       connectionStatus = 'Connected';
       console.log('WebSocket connected');
-      updateConnectionStatus();
+      // updateConnectionStatus will be called by DOMContentLoaded listener
     };
     
     ws.onclose = function() {
@@ -377,8 +379,12 @@ function gpsToXY(lat, lon) {
   return { x, y };
 }
 
-// Initialize the WebSocket connection
-connectWebSocket();
-
 drawField();
-statsDiv.innerHTML = '<p>Waiting for GPS data...</p>';
+
+document.addEventListener('DOMContentLoaded', () => {
+  connectWebSocket();
+  if (statsDiv) {
+    statsDiv.innerHTML = '<p>Waiting for GPS data...</p>';
+    updateConnectionStatus(); // Call it here after statsDiv is guaranteed to be initialized
+  }
+});

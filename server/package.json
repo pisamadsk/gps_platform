@@ -4,9 +4,10 @@
   "description": "Node.js backend for GPS Platform",
   "main": "index.js",
   "scripts": {
-    "start": "node gps-server.js"
+    "start": "node index.js"
   },
   "dependencies": {
+    "express": "^4.17.1",
     "ws": "^8.0.0"
   }
 }

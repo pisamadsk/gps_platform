@@ -1,15 +1,64 @@
-// Entry point for Node.js backend
-
+// Node.js backend: Receives GPS data via UDP and broadcasts to clients via WebSocket
+const express = require('express');
+const http = require('http');
+const WebSocket = require('ws');
 const path = require('path');
-const { spawn } = require('child_process');
 
-console.log('Starting GPS Platform backend server...');
+const app = express();
+const server = http.createServer(app);
+const wss = new WebSocket.Server({ server });
 
-// Import and run the main server script
-try {
-  require(path.join(__dirname, 'gps-server.js'));
-  console.log('GPS Platform backend server started successfully.');
-} catch (error) {
-  console.error('Failed to start GPS Platform backend server:', error);
-  process.exit(1);
-}
+const PORT = process.env.PORT || 8080;
+
+// Serve static files from the 'client' directory
+app.use(express.static(path.join(__dirname, '../client')));
+
+let lastGpsData = null;
+
+wss.on('connection', ws => {
+  console.log('WebSocket client connected');
+  if (lastGpsData) {
+    ws.send(lastGpsData);
+  }
+
+  ws.on('message', message => {
+    // Assuming GPS data might also come from WebSocket clients in some scenarios
+    // For this application, it's primarily for broadcasting, but good to have.
+    lastGpsData = message.toString();
+    wss.clients.forEach(client => {
+      if (client !== ws && client.readyState === WebSocket.OPEN) {
+        client.send(message.toString());
+      }
+    });
+  });
+
+  ws.on('close', () => {
+    console.log('WebSocket client disconnected');
+  });
+
+  ws.on('error', error => {
+    console.error('WebSocket error:', error);
+  });
+});
+
+server.listen(PORT, () => {
+  console.log(`Server listening on port ${PORT}`);
+  console.log(`Serving static files from ${path.join(__dirname, '../client')}`);
+});
+
+// This part is for receiving data from a source (e.g., a simulated GPS sender)
+// For the purpose of this deployment, we'll assume data comes from elsewhere
+// or is simulated. If you need to re-introduce UDP, it would be a separate service.
+// For now, we'll keep lastGpsData updated via a simple interval for testing purposes
+// or expect it to be updated by an external source.
+
+// Example: Simulate GPS data for testing if no external source is connected
+// setInterval(() => {
+//   const simulatedData = `GPS_DATA:${Date.now()}:Lat:${(Math.random() * 0.001) + 31.504920}:Lon:${(Math.random() * 0.001) - 9.764338}`;
+//   lastGpsData = simulatedData;
+//   wss.clients.forEach(client => {
+//     if (client.readyState === WebSocket.OPEN) {
+//       client.send(simulatedData);
+//     }
+//   });
+// }, 2000); // Send simulated data every 2 seconds
