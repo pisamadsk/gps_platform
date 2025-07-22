@@ -1,0 +1,12 @@
+{
+  "name": "gps-platform-server",
+  "version": "1.0.0",
+  "description": "Node.js backend for GPS Platform",
+  "main": "index.js",
+  "scripts": {
+    "start": "node gps-server.js"
+  },
+  "dependencies": {
+    "ws": "^8.0.0"
+  }
+}

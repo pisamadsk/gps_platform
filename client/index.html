@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>GPS Platform Dashboard</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+  <header>
+    <span style="font-weight:bold;font-size:1.3em;letter-spacing:1px;">GPS Platform Pro</span>
+    <span style="float:right;font-size:0.9em;color:#7dd3fc;">Live Analytics</span>
+  </header>
+  <div id="dashboard">
+    <div class="panel" id="acceleration-chart">
+      <h2>Physical: Acceleration (m/s²)</h2>
+      <canvas id="accelerationCanvas"></canvas>
+    </div>
+    <div class="panel" id="velocity-chart">
+      <h2>Physical: Velocity by Player</h2>
+      <canvas id="velocityCanvas"></canvas>
+    </div>
+    <div class="panel" id="sprints-chart">
+      <h2>Sprints - High Intensity</h2>
+      <canvas id="sprintsCanvas"></canvas>
+    </div>
+    <div class="panel" id="ima-chart">
+      <h2>Physical: IMA Impact by Player</h2>
+      <canvas id="imaCanvas"></canvas>
+    </div>
+    <div class="panel" id="pitch-map">
+      <h2>Pitch - Live Position</h2>
+      <canvas id="pitchCanvas"></canvas>
+    </div>
+
+  </div>
+  <script src="app.js"></script>
+</body>
+</html>
