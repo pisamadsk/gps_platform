@@ -44,17 +44,11 @@ function connectWebSocket() {
     };
     
     ws.onmessage = function(event) {
-      // Expecting: "lat:31.517123|lon:-9.757456|speed:5.2km/h|date:12/06/2024|time:14:23:01|hdop:1.2"
-      const segments = event.data.split('|');
-      if (segments.length === 6) {
-        const gps = {
-          lat: parseFloat(segments[0].split(':')[1]),
-          lon: parseFloat(segments[1].split(':')[1]),
-          speed: parseFloat(segments[2].split(':')[1]),
-          date: segments[3].split(':')[1],
-          time: segments[4].split(':')[1],
-          hdop: parseFloat(segments[5].split(':')[1])
-        };
+      // Expecting JSON string from Arduino
+      try {
+        const gps = JSON.parse(event.data);
+        // Ensure all expected fields are present and valid
+        if (typeof gps.latitude === 'number' && typeof gps.longitude === 'number' && typeof gps.speed === 'number' && typeof gps.hdop === 'number') {
         // --- Analytics Calculation ---
         if (analyticsData.lastGps) {
           const dt = 1; // Assume 1s interval (adjust if you have real timestamps)
@@ -139,7 +133,13 @@ function connectWebSocket() {
         drawPlayer(x, y);
         updateStats(gps);
         addPlayerInfo(gps);
+      } else {
+        console.warn('Received incomplete or invalid GPS data:', gps);
       }
+    } catch (e) {
+      console.error('Failed to parse incoming message as JSON:', e);
+      console.error('Received message:', event.data);
+    }
     };
   } catch (error) {
     connectionStatus = 'Failed to connect: ' + error.message;

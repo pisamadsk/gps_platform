@@ -24,10 +24,18 @@ wss.on('connection', ws => {
   ws.on('message', message => {
     // Assuming GPS data might also come from WebSocket clients in some scenarios
     // For this application, it's primarily for broadcasting, but good to have.
-    lastGpsData = message.toString();
-    wss.clients.forEach(client => {
-      if (client !== ws && client.readyState === WebSocket.OPEN) {
-        client.send(message.toString());
+    try {
+      const parsedMessage = JSON.parse(message.toString());
+      lastGpsData = JSON.stringify(parsedMessage); // Store as stringified JSON
+      wss.clients.forEach(client => {
+        if (client !== ws && client.readyState === WebSocket.OPEN) {
+          client.send(lastGpsData); // Send the stringified JSON
+        }
+      });
+    } catch (error) {
+      console.error('Failed to parse incoming message as JSON:', error);
+      console.error('Received message:', message.toString());
+    }
       }
     });
   });
