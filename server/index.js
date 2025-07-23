@@ -36,9 +36,7 @@ wss.on('connection', ws => {
       console.error('Failed to parse incoming message as JSON:', error);
       console.error('Received message:', message.toString());
     }
-      }
     });
-  });
 
   ws.on('close', () => {
     console.log('WebSocket client disconnected');
