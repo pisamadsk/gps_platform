@@ -19,9 +19,9 @@ const playerTableBody = document.querySelector('#player-table tbody');
 
 function connectWebSocket() {
   try {
-    const wsProtocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
-    const wsHost = window.location.host;
-    ws = new WebSocket(`${wsProtocol}//${wsHost}`);
+    // Explicitly use wss:// for secure WebSocket connection to Render
+    // Replace 'gps-platform-e6n5.onrender.com' with your actual Render URL if it changes
+    ws = new WebSocket(`wss://gps-platform-e6n5.onrender.com`);
     
     ws.onopen = function() {
       connectionStatus = 'Connected';
