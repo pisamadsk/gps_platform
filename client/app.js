@@ -4,11 +4,6 @@ let ws;
 let connectionStatus = 'Connecting...';
 
 // Field boundaries (adjust to your GPS area)
-//const lon_min = -9.764519167;
-//const lon_max = -9.7639675;
-//const lat_min = 31.50500167;
-//const lat_max = 31.50639517;
-
 const lon_min = -9.7581925;
 const lon_max = -9.7567925;
 const lat_min = 31.51674333;
@@ -19,8 +14,13 @@ const fieldHeight = 500;
 
 
 const pitchCanvas = document.getElementById('pitchCanvas');
-const statsDiv = document.getElementById('gps-data');
-const playerTableBody = document.querySelector('#player-table tbody');
+    const statsDiv = document.getElementById('gps-data');
+    const playerTableBody = document.querySelector('#player-table tbody');
+
+    let currentDrawWidth = 0;
+    let currentDrawHeight = 0;
+    let currentOffsetX = 0;
+    let currentOffsetY = 0;
 
 function connectWebSocket() {
   try {
@@ -130,7 +130,7 @@ function connectWebSocket() {
             }
             imaChart.update('none');
         }
-        const { x, y } = gpsToXY(gps.lat, gps.lon);
+        const { x, y } = gpsToXY(gps.latitude, gps.longitude);
         playerTrail.push({ x, y });
         if (playerTrail.length > maxTrailLength) playerTrail.shift();
         drawField();
@@ -314,6 +314,11 @@ function drawField() {
     ctx.stroke();
 
     ctx.restore(); // Restore the context to remove the translation
+
+    currentDrawWidth = drawWidth;
+    currentDrawHeight = drawHeight;
+    currentOffsetX = offsetX;
+    currentOffsetY = offsetY;
 }
 
 // Redraw the field on window resize to maintain aspect ratio
@@ -348,8 +353,8 @@ function drawTrail(trail) {
 }
 
 function updateStats(gps) {
-  statsDiv.innerHTML = `<b>Latitude:</b> ${gps.lat}<br>
-    <b>Longitude:</b> ${gps.lon}<br>
+  statsDiv.innerHTML = `<b>Latitude:</b> ${gps.latitude}<br>
+    <b>Longitude:</b> ${gps.longitude}<br>
     <b>Speed:</b> ${gps.speed} km/h<br>
     <b>Date:</b> ${gps.date}<br>
     <b>Time:</b> ${gps.time}<br>
@@ -361,9 +366,9 @@ function addPlayerInfo(gps) {
   const timeCell = document.createElement('td');
   timeCell.textContent = gps.time;
   const latCell = document.createElement('td');
-  latCell.textContent = gps.lat.toFixed(6);
+  latCell.textContent = gps.latitude.toFixed(6);
   const lonCell = document.createElement('td');
-  lonCell.textContent = gps.lon.toFixed(6);
+  lonCell.textContent = gps.longitude.toFixed(6);
   const speedCell = document.createElement('td');
   speedCell.textContent = gps.speed.toFixed(2);
   row.appendChild(timeCell);
@@ -378,9 +383,9 @@ function addPlayerInfo(gps) {
 }
 
 function gpsToXY(lat, lon) {
-  // Map GPS coordinates to field canvas
-  const x = (lon - lon_min) / (lon_max - lon_min) * fieldWidth;
-  const y = fieldHeight - (lat - lat_min) / (lat_max - lat_min) * fieldHeight;
+  // Map GPS coordinates to field canvas, using dynamic draw dimensions and offsets
+  const x = (lon - lon_min) / (lon_max - lon_min) * currentDrawWidth + currentOffsetX;
+  const y = currentDrawHeight - (lat - lat_min) / (lat_max - lat_min) * currentDrawHeight + currentOffsetY;
   return { x, y };
 }
 
