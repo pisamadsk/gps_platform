@@ -10,10 +10,10 @@ let connectionStatus = 'Connecting...';
 //const lat_max = 31.51814333;
 
 
-const lon_min = -9.764519167;
-const lon_max = -9.7639675;
-const lat_min = 31.50500167;
-const lat_max = 31.50639517;
+const lon_min = -7.577633;
+const lon_max = -7.577633;
+const lat_min = 33.54373817;
+const lat_max = 33.54373817;
 
 
 const fieldWidth = 800;
