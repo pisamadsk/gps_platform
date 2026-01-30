@@ -10,11 +10,16 @@ let connectionStatus = 'Connecting...';
 //const lat_max = 31.51814333;
 
 
-const lon_min = -7.577633;
-const lon_max = -7.577633;
-const lat_min = 33.54373817;
-const lat_max = 33.54373817;
+//const lon_min = -7.577633;
+//const lon_max = -7.577633;
+//const lat_min = 33.54373817;
+//const lat_max = 33.54373817;
 
+// Field boundaries (adjust to your GPS area)
+const lon_min = -9.757375;
+const lon_max = -9.757335;
+const lat_min = 31.517440;
+const lat_max = 31.517475;
 
 const fieldWidth = 800;
 const fieldHeight = 500;
